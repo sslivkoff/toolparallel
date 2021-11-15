@@ -39,9 +39,9 @@ def parallelize_input(
                 parallel_kwargs = {}
             parallel_kwargs = dict(config, **parallel_kwargs)
 
-            if plural_arg in kwargs:
+            if plural_arg in kwargs and kwargs[plural_arg] is not None:
                 values = kwargs[plural_arg]
-                common = {k: v for k, v in kwargs.items() if k != plural_arg}
+                common = {k: v for k, v in kwargs.items() if k != plural_arg and k != singular_arg}
                 common.update(dict(zip(argspec.args, args)))
 
                 if pass_f_by_ref:
@@ -58,6 +58,8 @@ def parallelize_input(
                 )
 
             else:
+                if plural_arg in kwargs:
+                    kwargs.pop(plural_arg)
                 return f(*args, **kwargs)
 
         return wrapped_f
